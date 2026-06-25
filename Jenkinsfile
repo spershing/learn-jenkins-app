@@ -24,6 +24,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Test Stage Beginning"
+                test -f build/index.html
                 '''
             }
         }
