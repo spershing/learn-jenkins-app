@@ -15,6 +15,7 @@ pipeline {
                 node --version
                 npm --version
                 npm ci
+                npm audit fix --force
                 npm run build
                 ls -la
                 '''
