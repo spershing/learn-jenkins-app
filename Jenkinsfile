@@ -16,6 +16,7 @@ pipeline {
                 npm --version
                 npm ci
                 npm audit fix --force
+                npm install react-scripts --save
                 npm run build
                 ls -la
                 '''
