@@ -78,7 +78,7 @@ pipeline {
                 npm install netlify-cli@20.1.1
                 npx netlify --version
                 echo "Deploying Site ID $NETLIFY_SITE_ID to production."
-                npx netlify status
+                npx netlify deploy --dir=./website --prod 
                 '''
             }
         }
