@@ -70,8 +70,7 @@ pipeline {
             }
             steps {
                 sh '''
-                npm audit fix
-                npm install netlify-cli
+                npm install netlify-cli -g
                 netlify --version
                 '''
             }
