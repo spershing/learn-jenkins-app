@@ -66,7 +66,7 @@ pipeline {
                 }
             }
         }
-                stage('Deploy') {
+        stage('Deploy') {
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -79,6 +79,22 @@ pipeline {
                 npx netlify --version
                 echo "Deploying Site ID $NETLIFY_SITE_ID to production."
                 npx netlify deploy --dir=./website --prod 
+                '''
+            }
+        }
+        stage('Prod E2E') {
+            environment {
+                CI_ENVIRONMENT_URL = 'https://genuine-blancmange-dbf776.netlify.app/'
+            }
+            agent{
+                docker{
+                    image 'mcr.microsoft.com/playwright:v1.39.0-focal'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                npx playwright test --reporter=html
                 '''
             }
         }
