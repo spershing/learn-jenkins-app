@@ -2,13 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            /*
-            This is a multi line comment which reflects fact
-            that the agent section below dictates the configuration
-            of the agent, in this case a Docker container running
-            NodeJS on an alpine linux
-            */
+        /* stage('Build') {
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -27,35 +21,41 @@ pipeline {
                 '''
             }
         }
-        stage('Test') {
-            agent{
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
+        */
+
+        stage('Run Tests') {
+            parallel {
+                stage('Test') {
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                        echo "Test Stage Beginning"
+                        test -f build/index.html
+                        npm test
+                        '''
+                    }
                 }
-            }
-            steps {
-                sh '''
-                echo "Test Stage Beginning"
-                test -f build/index.html
-                npm test
-                '''
-            }
-        }
-        stage('E2E') {
-            agent{
-                docker{
-                    image 'mcr.microsoft.com/playwright:v1.39.0-focal'
-                    reuseNode true
+                stage('E2E') {
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.39.0-focal'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                        npm install serve
+                        node_modules/.bin/serve -s build &
+                        sleep 15
+                        npx playwright test --reporter=html
+                        '''
+                    }
                 }
-            }
-            steps {
-                sh '''
-                npm install serve
-                node_modules/.bin/serve -s build &
-                sleep 15
-                npx playwright test --reporter=html
-                '''
             }
         }
     }
